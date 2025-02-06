@@ -23,7 +23,6 @@ root.title("tool v1.0")
 tab_control = ttk.Notebook(root)
 # 将Notebook放置到窗口中
 tab_control.pack(expand=1, fill="both")
-root.iconbitmap(r"icons\favicon.ico")
 
 # 创建标签页并添加到Notebook中
 # 工具页tab
