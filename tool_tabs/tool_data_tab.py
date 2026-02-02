@@ -216,10 +216,10 @@ class ToolDataTab(object):
     def json_path_extract_cmd(self):
         try:
             before_text = self.before_log_text.get("1.0", tk.END)
-            if not before_text:
+            json_path = self.json_path_extract_entry.get()
+            if not before_text or not json_path:
                 return
             before_text = before_text.strip()
-            json_path = self.json_path_extract_entry.get()
             results = JsonExtractor.extract_values(before_text, json_path)
 
             wrapper = self.convert_wrapper_dropdown.get()
@@ -239,7 +239,7 @@ class ToolDataTab(object):
         except Exception as e:
             self.after_log_text.config(state=tk.NORMAL)
             self.after_log_text.delete(1.0, tk.END)
-            self.after_log_text.insert(tk.END, "取值异常 {}".format(traceback.format_exc()))
+            self.after_log_text.insert(tk.END, f"路径取值异常 {e}")
             self.after_log_text.config(state=tk.DISABLED)
 
     def escape_cmd(self):
@@ -258,7 +258,7 @@ class ToolDataTab(object):
         except Exception as e:
             self.after_log_text.config(state=tk.NORMAL)
             self.after_log_text.delete(1.0, tk.END)
-            self.after_log_text.insert(tk.END, "转义异常 {}".format(traceback.format_exc()))
+            self.after_log_text.insert(tk.END, f"转义异常 {e}")
             self.after_log_text.config(state=tk.DISABLED)
 
     def convert_cmd(self, distinct=False):
@@ -301,7 +301,7 @@ class ToolDataTab(object):
         except Exception as e:
             self.after_log_text.config(state=tk.NORMAL)
             self.after_log_text.delete(1.0, tk.END)
-            self.after_log_text.insert(tk.END, "转换异常 {}".format(traceback.format_exc()))
+            self.after_log_text.insert(tk.END, f"转换异常 {e}")
             self.after_log_text.config(state=tk.DISABLED)
 
     def clear_text_cmd(self):
