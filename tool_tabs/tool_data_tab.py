@@ -29,6 +29,8 @@ class ToolDataTab(object):
         self.convert_wrapper_dropdown = None
         # 转换后间隔符号下拉
         self.convert_sep_dropdown = None
+        # 大小写选项下拉
+        self.case_convert_dropdown = None
         # json路径取值输入框
         self.json_path_extract_entry = None
         # 转换指标参数按钮
@@ -43,6 +45,7 @@ class ToolDataTab(object):
         self.escape_text_button = None
         # json路径取值按钮 json.dumps
         self.json_path_extract_button = None
+        self.case_convert_button = None
         # text
         self.before_log_text = None
         self.after_log_text = None
@@ -55,6 +58,8 @@ class ToolDataTab(object):
         self.convert_wrapper_values = ["'", '"', '']
         self.convert_sep_options = ['逗号', '制表符', '换行符', '无']
         self.convert_sep_values = [",", '\t', '\n', '']
+        self.case_convert_options = ['大写', '小写']
+        self.case_convert_values = ['1', '2']
         # 渲染布局
         self._create_ui()
 
@@ -100,6 +105,7 @@ class ToolDataTab(object):
             ("分隔符：", self.sep_options, "sep_dropdown"),
             ("包裹符：", self.convert_wrapper_options, "convert_wrapper_dropdown"),
             ("转换间隔符：", self.convert_sep_options, "convert_sep_dropdown"),
+            ("大小写：", self.case_convert_options, "case_convert_dropdown"),
         ]
 
         for idx, (label_text, options, attr_name) in enumerate(dropdowns):
@@ -112,7 +118,7 @@ class ToolDataTab(object):
 
             # 下拉框
             dropdown = ttk.Combobox(
-                group_frame, width=12, state="readonly", values=options
+                group_frame, width=6, state="readonly", values=options
             )
             dropdown.set(options[0])
             dropdown.pack(side=tk.LEFT)
@@ -147,6 +153,7 @@ class ToolDataTab(object):
             ("转换", self.convert_cmd, "convert_button"),
             ("去重", self.distinct_cmd, "distinct_text_button"),
             ("转义", self.escape_cmd, "escape_text_button"),
+            ("大小写转换", self.case_convert_cmd, "case_convert_button"),
             ("路径取值", self.json_path_extract_cmd, "json_path_extract_button"),
         ]
 
@@ -212,6 +219,31 @@ class ToolDataTab(object):
 
     def distinct_cmd(self):
         self.convert_cmd(True)
+
+    def case_convert_cmd(self):
+        try:
+            before_text = self.before_log_text.get("1.0", tk.END)
+            if not before_text:
+                return
+            before_text = before_text.strip()
+            case_convert_type = self.case_convert_dropdown.get()
+            index = self.case_convert_options.index(case_convert_type)
+            value = self.case_convert_values[index]
+            if value == '1':
+                params = before_text.upper()
+            elif value == '2':
+                params = before_text.lower()
+            else:
+                return
+            self.after_log_text.config(state=tk.NORMAL)
+            self.after_log_text.delete(1.0, tk.END)
+            self.after_log_text.insert(tk.END, params)
+            self.after_log_text.config(state=tk.DISABLED)
+        except Exception as e:
+            self.after_log_text.config(state=tk.NORMAL)
+            self.after_log_text.delete(1.0, tk.END)
+            self.after_log_text.insert(tk.END, f"大小写转换异常 {e}")
+            self.after_log_text.config(state=tk.DISABLED)
 
     def json_path_extract_cmd(self):
         try:
